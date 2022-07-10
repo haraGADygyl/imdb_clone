@@ -1,0 +1,33 @@
+{% load static %}
+<h1>My movies:</h1>
+
+<div>
+    <a href="{% url 'home' %}">Home</a>
+</div>
+
+<div>
+    {% for movie in object_list %}
+        <hr>
+        <a href="{% get_media_prefix %}{{ movie.photo }}" target="_blank">
+            <img src="{% get_media_prefix %}{{ movie.photo }}" alt="{{ movie.title }} poster" height="300px">
+        </a>
+        <p><a href="{% url 'movie_detail' movie.pk %}">{{ movie.title }}</a></p>
+        <p>Title: {{ movie.title }}</p>
+        <p>Year: {{ movie.year }}</p>
+        <p>Rating: {{ movie.avg_rating|floatformat:2 }} / 10</p>
+        <p>Total votes: {{ movie.ratings_count }}</p>
+        <p>Actors: {{ movie.actors }}</p>
+        <p>Genre: {{ movie.genre }}</p>
+
+        <p>Trailer: <a href="{{ movie.trailer }}" target="_blank">
+            <button>Link</button>
+        </a></p>
+        <a href="{% url 'movie_list' %}">Back</a>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'movie_rate' movie.pk %}">Rate</a>
+            <a href="{% url 'movie_edit' movie.pk %}">Edit</a>
+            <a href="{% url 'movie_delete' movie.pk %}">Delete</a>
+        {% endif %}
+    {% endfor %}
+</div>

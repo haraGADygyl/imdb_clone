@@ -1,0 +1,13 @@
+{% load static %}
+
+<a href="{% url 'home' %}">Home</a>
+
+<h1>Movie details page</h1>
+
+<form method="post" action="{% url 'movie_rate' movie_pk %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Rate"/>
+</form>
+
+<a href="{% url 'movie_list' %}">Back</a>

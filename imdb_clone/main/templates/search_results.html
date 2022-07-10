@@ -1,0 +1,40 @@
+{% load static %}
+<a href="{% url 'home' %}">Home</a>
+<h1>Search Results:</h1>
+
+<style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 10px
+    }
+</style>
+
+<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+
+<table class="sortable">
+    <tr>
+        <th>Poster</th>
+        <th>Title</th>
+        <th>Year</th>
+        <th>Rating</th>
+        <th>Actors</th>
+        <th>Genre</th>
+        <th>Trailer</th>
+    </tr>
+    {% for movie in object_list %}
+        <tr>
+            <td><a href="{% get_media_prefix %}{{ movie.photo }}" target="_blank">
+                <img src="{% get_media_prefix %}{{ movie.photo }}" alt="{{ movie.title }} poster" height="300px">
+            </a></td>
+            <td><a href="{% url 'movie_detail' movie.pk %}">{{ movie.title }}</a></td>
+            <td>{{ movie.year }}</td>
+            <td>{{ movie.avg_rating|floatformat:2 }}</td>
+            <td>{{ movie.actors }}</td>
+            <td>{{ movie.genre }}</td>
+            <td><a href="{{ movie.trailer }}" target="_blank">
+                <button>Link</button>
+            </a></td>
+        </tr>
+    {% endfor %}
+</table>

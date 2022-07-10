@@ -1,0 +1,31 @@
+<h1>Welcome to the Movies Database!</h1>
+
+<div>
+    <h3>User: {{ user }}</h3>
+</div>
+
+<form method="get" action="{% url 'movie_search' %}">
+    <h3>Search</h3>
+    <label>
+        <input name="q" type="text" placeholder="Search...">
+    </label>
+    <input type="submit" value="Search">
+</form>
+
+{% if not user.is_authenticated %}
+    <div>
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'register' %}">Register</a>
+    </div>
+{% else %}
+    <div>
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+{% endif %}
+
+<div>
+    <a href="{% url 'movie_list' %}">All movies</a>
+    <a href="{% url 'movie_create' %}">Add movie</a>
+    <a href="{% url 'my_movies' %}">My movies</a>
+</div>
+

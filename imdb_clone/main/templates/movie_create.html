@@ -1,0 +1,9 @@
+<h1>Add a movie:</h1>
+
+<form method="post" action="{% url 'movie_create' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Save">
+
+    <a href="{% url 'home' %}">Cancel</a>
+</form>
