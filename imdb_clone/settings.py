@@ -10,16 +10,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
+import dj_database_url
 from django.contrib import staticfiles
 from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -31,7 +32,6 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', get_random_secret_key())
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", '127.0.0.1,localhost').split(",")
-
 
 # Application definition
 
@@ -77,36 +77,50 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'imdb_clone.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-if os.getenv("DATABASE_URL", "") != "":
-    r = urlparse(os.environ.get("DATABASE_URL"))
+DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
+if DEVELOPMENT_MODE is True:
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": os.path.relpath(r.path, "/"),
-            "USER": r.username,
-            "PASSWORD": r.password,
-            "HOST": r.hostname,
-            "PORT": r.port,
-            "OPTIONS": {"sslmode": "require"},
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
-else:
+elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
+    if os.getenv("DATABASE_URL", None) is None:
+        raise Exception("DATABASE_URL environment variable not defined")
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'imdb_clone_db',
-            'USER': 'postgres',
-            'PASSWORD': 'manushev',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
-        }
+        "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
     }
 
+# if os.getenv("DATABASE_URL", "") != "":
+#     r = urlparse(os.environ.get("DATABASE_URL"))
+#
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.postgresql_psycopg2",
+#             "NAME": os.path.relpath(r.path, "/"),
+#             "USER": r.username,
+#             "PASSWORD": r.password,
+#             "HOST": r.hostname,
+#             "PORT": r.port,
+#             "OPTIONS": {"sslmode": "require"},
+#         }
+#     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': 'imdb_clone_db',
+#             'USER': 'postgres',
+#             'PASSWORD': 'manushev',
+#             'HOST': '127.0.0.1',
+#             'PORT': '5432',
+#         }
+#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -126,7 +140,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -137,7 +150,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
@@ -159,3 +171,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home"
+
+
